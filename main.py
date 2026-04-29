@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI
 from fastapi.responses import RedirectResponse, Response
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from routers import ingest, themes, chat
@@ -8,15 +8,15 @@ app = FastAPI(title='FeedbackOS API')
 scheduler = AsyncIOScheduler()
 
 
-def include_router_if_present(module):
-    router = getattr(module, 'router', None)
-    if router is not None:
-        app.include_router(router, prefix='/api')
+def include_api_router(router: APIRouter, name: str):
+    if not isinstance(router, APIRouter):
+        raise RuntimeError(f'{name} router must be a fastapi.APIRouter instance')
+    app.include_router(router, prefix='/api')
 
 
-include_router_if_present(ingest)
-include_router_if_present(themes)
-include_router_if_present(chat)
+include_api_router(ingest.router, 'ingest')
+include_api_router(themes.router, 'themes')
+include_api_router(chat.router, 'chat')
 
 @app.on_event('startup')
 async def startup():
