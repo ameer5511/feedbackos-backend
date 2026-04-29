@@ -11,6 +11,8 @@ router = APIRouter()
 @router.post('/ingest/paste', status_code=202)
 async def ingest_paste(payload: dict, workspace_id: str, bt: BackgroundTasks):
     chunks = chunk_text(payload['text'])
+    if not chunks:
+        raise HTTPException(400, 'No feedback items found. Paste text must include at least one item with 40+ characters.')
     items = [FeedbackItem(raw_text=c, source='paste', workspace_id=workspace_id)
              for c in chunks]
     await store_feedback(items)
@@ -27,6 +29,8 @@ async def ingest_csv(file: UploadFile, text_column: str,
     items = [FeedbackItem(raw_text=str(row[text_column]), source='csv',
                          workspace_id=workspace_id)
              for _, row in df.iterrows() if len(str(row[text_column])) > 30]
+    if not items:
+        raise HTTPException(400, 'No feedback items found. Check the selected text column and row length.')
     await store_feedback(items)
     bt.add_task(embed_and_store, items)
     return {'status': 'processing', 'queued': len(items)}

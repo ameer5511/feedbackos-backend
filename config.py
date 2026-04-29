@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent
 ENV_PATH = BASE_DIR / ".env"
+DEFAULT_GROQ_MODEL = "llama-3.3-70b-versatile"
 
 
 @lru_cache(maxsize=1)
@@ -24,3 +25,7 @@ def get_env(name: str, *, required: bool = False) -> Optional[str]:
             f"Expected it in {ENV_PATH}"
         )
     return value
+
+
+def get_groq_model() -> str:
+    return get_env("GROQ_MODEL") or DEFAULT_GROQ_MODEL

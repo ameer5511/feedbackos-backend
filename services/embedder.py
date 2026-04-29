@@ -12,7 +12,9 @@ def get_hf_client():
 
 def embed_text(text: str) -> list[float]:
     result = get_hf_client().feature_extraction(text, model=HF_MODEL)
-    return result[0].tolist()  # 384-dim vector
+    if hasattr(result, 'tolist'):
+        return result.tolist()
+    return list(result)
 
 
 async def embed_and_store(items: list):

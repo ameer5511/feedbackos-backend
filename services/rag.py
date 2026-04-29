@@ -2,7 +2,7 @@ from services.embedder import embed_text
 from db.supabase import get_supabase
 from groq import Groq
 
-from config import get_env
+from config import get_env, get_groq_model
 
 RAG_PROMPT = '''
 You are a product analyst. Answer the user's question using ONLY the feedback
@@ -38,7 +38,7 @@ async def answer_from_feedback(question: str, workspace_id: str) -> dict:
     # 3. Call Groq with context + question
     prompt = RAG_PROMPT.replace('{context}', context).replace('{question}', question)
     resp = get_groq_client().chat.completions.create(
-        model='llama-3.1-70b-versatile',
+        model=get_groq_model(),
         messages=[{'role': 'user', 'content': prompt}],
         max_tokens=500
     )

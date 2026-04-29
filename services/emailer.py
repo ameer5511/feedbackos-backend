@@ -2,7 +2,7 @@ from groq import Groq
 from db.supabase import get_supabase
 import resend
 
-from config import get_env
+from config import get_env, get_groq_model
 
 
 DIGEST_PROMPT = '''
@@ -36,7 +36,7 @@ async def send_weekly_digests():
         import json
         prompt = DIGEST_PROMPT.replace('{themes_json}', json.dumps(themes, indent=2))
         resp = get_groq_client().chat.completions.create(
-            model='llama-3.1-70b-versatile',
+            model=get_groq_model(),
             messages=[{'role': 'user', 'content': prompt}],
             max_tokens=600
         )

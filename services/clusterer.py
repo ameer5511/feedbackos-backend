@@ -1,6 +1,7 @@
 from groq import Groq
 from db.supabase import supabase
 import json, os
+from config import get_groq_model
 
 groq = Groq(api_key=os.getenv('GROQ_API_KEY'))
 
@@ -30,7 +31,7 @@ async def detect_themes(workspace_id: str) -> list[dict]:
     prompt = CLUSTER_PROMPT.replace('{feedback_text}', combined)
 
     response = groq.chat.completions.create(
-        model='llama-3.1-70b-versatile',
+        model=get_groq_model(),
         messages=[{'role': 'user', 'content': prompt}],
         max_tokens=1000
     )
