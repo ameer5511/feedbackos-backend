@@ -43,3 +43,17 @@ async def get_workspace(workspace_id: str):
         .execute()
     )
     return result.data
+
+
+async def get_themes(workspace_id: str):
+    result = (
+        get_supabase().table("themes")
+        .select("*")
+        .eq("workspace_id", workspace_id)
+        .execute()
+    )
+    return result.data
+
+
+# Alias for backward compatibility
+supabase = get_supabase()
