@@ -1,10 +1,20 @@
 from fastapi import APIRouter, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse, Response
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from routers import ingest, themes, chat
 from services.emailer import send_weekly_digests
 
 app = FastAPI(title='FeedbackOS API')
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://feedbackos.vercel.app",
+        "http://localhost:3000"
+    ],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 scheduler = AsyncIOScheduler()
 
 
